@@ -47,7 +47,6 @@ class _LoginViewState extends State<LoginView> {
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
       GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      if (googleAuth.accessToken != null) {
         try {
           AuthCredential credential = GoogleAuthProvider.getCredential(
               idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
@@ -57,7 +56,6 @@ class _LoginViewState extends State<LoginView> {
         } catch (e) {
           showErrorDialog(context, e.details);
         }
-      }
     }
   }
 
