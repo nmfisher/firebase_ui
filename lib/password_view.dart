@@ -17,6 +17,7 @@ class PasswordView extends StatefulWidget {
 class _PasswordViewState extends State<PasswordView> {
   TextEditingController _controllerEmail;
   TextEditingController _controllerPassword;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   initState() {
@@ -35,26 +36,36 @@ class _PasswordViewState extends State<PasswordView> {
       ),
       body: new Builder(
         builder: (BuildContext context) {
-          return new Padding(
+          return new Form(
+            key: _formKey,
+      child:Padding(
             padding: const EdgeInsets.all(16.0),
             child: new Column(
               children: <Widget>[
-                new TextField(
-                  controller: _controllerEmail,
-                  keyboardType: TextInputType.emailAddress,
-                  autocorrect: false,
-                  decoration: new InputDecoration(
-                      labelText: FFULocalizations.of(context).emailLabel),
-                ),
+                // new TextField(
+                //   controller: _controllerEmail,
+                //   keyboardType: TextInputType.emailAddress,
+                //   autocorrect: false,
+                //   decoration: new InputDecoration(
+                //       labelText: FFULocalizations.of(context).emailLabel),
+                // ),
                 //const SizedBox(height: 5.0),
-                new TextField(
+                new TextFormField(
+                   validator: (value) {
+                    if (value.length < 6) {
+                      return 'Password should be at least 8 chars long.';
+                    }
+                    return null;
+                  },
+                  onChanged: (val) {
+                    _formKey.currentState.validate();
+                  },
                   controller: _controllerPassword,
                   autofocus: true,
-                  onSubmitted: _submit,
                   obscureText: true,
                   autocorrect: false,
                   decoration: new InputDecoration(
-                      labelText: FFULocalizations.of(context).passwordLabel),
+                  labelText: FFULocalizations.of(context).passwordLabel),
                 ),
                 new SizedBox(height: 16.0),
                 new Container(
@@ -67,7 +78,7 @@ class _PasswordViewState extends State<PasswordView> {
                         onTap: _handleLostPassword)),
               ],
             ),
-          );
+          ));
         },
       ),
       persistentFooterButtons: <Widget>[
@@ -104,10 +115,12 @@ class _PasswordViewState extends State<PasswordView> {
     AuthResult authResult;
     FirebaseUser user;
     try {
-      authResult = await _auth.signInWithEmailAndPassword(
+      if(_formKey.currentState.validate()) {
+          authResult = await _auth.signInWithEmailAndPassword(
           email: _controllerEmail.text, password: _controllerPassword.text);
-      user = authResult.user;
-      print(user);
+          user = authResult.user;
+          print(user);
+      }
     } catch (exception) {
       //TODO improve errors catching
       String msg = FFULocalizations.of(context).passwordInvalidMessage;

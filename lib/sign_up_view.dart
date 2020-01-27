@@ -16,6 +16,8 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
+  final _formKey = GlobalKey<FormState>();
+
   TextEditingController _controllerEmail;
   TextEditingController _controllerDisplayName;
   TextEditingController _controllerPassword;
@@ -50,52 +52,63 @@ class _SignUpViewState extends State<SignUpView> {
       ),
       body: new Builder(
         builder: (BuildContext context) {
-          return new Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: new ListView(
-              children: <Widget>[
-                new TextField(
-                  controller: _controllerEmail,
-                  keyboardType: TextInputType.emailAddress,
-                  autocorrect: false,
-                  onSubmitted: _submit,
-                  decoration: new InputDecoration(
-                      labelText: FFULocalizations.of(context).emailLabel),
+          return new Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: new ListView(  
+                  children: <Widget>[
+                    // new TextField(
+                    //   controller: _controllerEmail,
+                    //   keyboardType: TextInputType.emailAddress,
+                    //   autocorrect: false,
+                    //   onSubmitted: _submit,
+                    //   decoration: new InputDecoration(
+                    //       labelText: FFULocalizations.of(context).emailLabel),
+                    // ),
+                    const SizedBox(height: 8.0),
+                    new TextField(
+                      controller: _controllerDisplayName,
+                      autofocus: true,
+                      keyboardType: TextInputType.text,
+                      autocorrect: false,
+                      onChanged: _checkValid,
+                      onSubmitted: _submitDisplayName,
+                      decoration: new InputDecoration(
+                          labelText: FFULocalizations.of(context).nameLabel),
+                    ),
+                    const SizedBox(height: 8.0),
+                    new TextFormField(
+                      controller: _controllerPassword,
+                      obscureText: true,
+                      autocorrect: false,
+                      validator: (value) {
+                        if (value.length < 6) {
+                          return 'Password should be at least 8 chars long.';
+                        }
+                        return null;
+                      },
+                      onChanged: (val) {
+                        _formKey.currentState.validate();
+                      },
+                      focusNode: _focusPassword,
+                      decoration: new InputDecoration(
+                          labelText:
+                              FFULocalizations.of(context).passwordLabel),
+                    ),
+                    !widget.passwordCheck
+                        ? new Container()
+                        : new TextField(
+                            controller: _controllerCheckPassword,
+                            obscureText: true,
+                            autocorrect: false,
+                            decoration: new InputDecoration(
+                                labelText: FFULocalizations.of(context)
+                                    .passwordCheckLabel),
+                          ),
+                  ],
                 ),
-                const SizedBox(height: 8.0),
-                new TextField(
-                  controller: _controllerDisplayName,
-                  autofocus: true,
-                  keyboardType: TextInputType.text,
-                  autocorrect: false,
-                  onChanged: _checkValid,
-                  onSubmitted: _submitDisplayName,
-                  decoration: new InputDecoration(
-                      labelText: FFULocalizations.of(context).nameLabel),
-                ),
-                const SizedBox(height: 8.0),
-                new TextField(
-                  controller: _controllerPassword,
-                  obscureText: true,
-                  autocorrect: false,
-                  onSubmitted: _submit,
-                  focusNode: _focusPassword,
-                  decoration: new InputDecoration(
-                      labelText: FFULocalizations.of(context).passwordLabel),
-                ),
-                !widget.passwordCheck
-                    ? new Container()
-                    : new TextField(
-                        controller: _controllerCheckPassword,
-                        obscureText: true,
-                        autocorrect: false,
-                        decoration: new InputDecoration(
-                            labelText: FFULocalizations.of(context)
-                                .passwordCheckLabel),
-                      ),
-              ],
-            ),
-          );
+              ));
         },
       ),
       persistentFooterButtons: <Widget>[
@@ -128,6 +141,10 @@ class _SignUpViewState extends State<SignUpView> {
     if (widget.passwordCheck &&
         _controllerPassword.text != _controllerCheckPassword.text) {
       showErrorDialog(context, FFULocalizations.of(context).passwordCheckError);
+      return;
+    }
+
+    if (!_formKey.currentState.validate()) {
       return;
     }
 
