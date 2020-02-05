@@ -51,6 +51,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) => new Scaffold(
+    backgroundColor: widget.color,
       appBar: widget.showBar
           ? new AppBar(
               title: new Text(widget.title),
@@ -61,7 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
       body: new Builder(
         builder: (BuildContext context) {
           return new Container(
-              decoration: new BoxDecoration(color: widget.color),
+              // decoration: new BoxDecoration(color: ),
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
