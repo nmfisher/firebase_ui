@@ -17,10 +17,10 @@ class SignInScreen extends StatefulWidget {
       this.color = Colors.white,
       this.twitterConsumerKey,
       this.twitterConsumerSecret,
+      this.padding,
+      this.horizontal = false,
       @required this.showBar,
-      @required this.avoidBottomInset,
-      @required this.bottomPadding,
-      @required this.horizontalPadding})
+      @required this.avoidBottomInset})
       : super(key: key);
 
   final String title;
@@ -33,16 +33,16 @@ class SignInScreen extends StatefulWidget {
   final String twitterConsumerSecret;
   final bool showBar;
   final bool avoidBottomInset;
-  final double horizontalPadding;
-  final double bottomPadding;
+  final bool horizontal;
+  final EdgeInsets padding;
 
   @override
-  _SignInScreenState createState() => new _SignInScreenState();
+  _SignInScreenState createState() => _SignInScreenState();
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  Widget get _header => widget.header ?? new Container();
-  Widget get _footer => widget.footer ?? new Container();
+  Widget get _header => widget.header ?? Container();
+  Widget get _footer => widget.footer ?? Container();
 
   bool get _passwordCheck => widget.signUpPasswordCheck ?? false;
 
@@ -50,38 +50,21 @@ class _SignInScreenState extends State<SignInScreen> {
       widget.providers ?? [ProvidersTypes.email];
 
   @override
-  Widget build(BuildContext context) => new Scaffold(
-    backgroundColor: widget.color,
-      appBar: widget.showBar
-          ? new AppBar(
-              title: new Text(widget.title),
-              elevation: 4.0,
-            )
-          : null,
-      resizeToAvoidBottomInset: widget.avoidBottomInset,
-      body: new Builder(
-        builder: (BuildContext context) {
-          return new Container(
-              // decoration: new BoxDecoration(color: ),
-              child: new Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _header,
-                  new Expanded(
-                    child: new Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: widget.horizontalPadding),
-                        child: LoginView(
-                          providers: _providers,
-                          passwordCheck: _passwordCheck,
-                          twitterConsumerKey: widget.twitterConsumerKey,
-                          twitterConsumerSecret: widget.twitterConsumerSecret,
-                          bottomPadding: widget.bottomPadding,
-                        )),
-                  ),
-                  _footer
-                ],
-              ));
-        },
-      ));
+  Widget build(BuildContext context) =>  Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _header,
+          LoginView(
+            horizontal: widget.horizontal,
+            providers: _providers,
+            passwordCheck: _passwordCheck,
+            twitterConsumerKey: widget.twitterConsumerKey,
+            twitterConsumerSecret: widget.twitterConsumerSecret,
+            padding: widget.padding,
+          ),
+          _footer
+        ],
+      );
 }

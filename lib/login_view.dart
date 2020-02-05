@@ -12,7 +12,8 @@ class LoginView extends StatefulWidget {
   final bool passwordCheck;
   final String twitterConsumerKey;
   final String twitterConsumerSecret;
-  final double bottomPadding;
+  final EdgeInsets padding;
+  final bool horizontal;
 
   LoginView(
       {Key key,
@@ -20,7 +21,8 @@ class LoginView extends StatefulWidget {
       this.passwordCheck,
       this.twitterConsumerKey,
       this.twitterConsumerSecret,
-      @required this.bottomPadding})
+      this.horizontal = false,
+      @required this.padding})
       : super(key: key);
 
   @override
@@ -115,14 +117,22 @@ class _LoginViewState extends State<LoginView> {
           .copyWith(onSelected: _handleEmailSignIn),
     };
 
-    return new Container(
-        // padding: widget.padding,
-        child: new Column(
-            children: widget.providers.map((p) {
-      return new Container(
-          padding: EdgeInsets.only(bottom: widget.bottomPadding),
-          child: _buttons[p] ?? new Container());
-    }).toList()));
+    var providerWidgets = widget.providers.map((p) {
+      if(!_buttons.containsKey(p))
+        return Container();
+      return Padding(
+          padding: widget.padding,
+          child:_buttons[p]);
+    }).toList();
+    
+    var wrapper = widget.horizontal ?  Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children:providerWidgets) : Column(
+        mainAxisSize: MainAxisSize.min,
+        children:providerWidgets);
+    
+    return wrapper;
   }
 
   void _followProvider(String value) {
