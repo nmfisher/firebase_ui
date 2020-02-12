@@ -15,7 +15,10 @@ dependencies:
 
 
   firebase_auth: 
-    path: ../flutterfire/packages/firebase_auth/firebase_auth
+    #path: ../flutterfire/packages/firebase_auth/firebase_auth
+    git:
+       url: git://github.com/nmfisher/flutterfire.git
+       ref: master
   
   google_sign_in: ^4.0.4
   flutter_facebook_login: ^3.0.0
