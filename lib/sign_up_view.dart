@@ -145,6 +145,7 @@ class _SignUpViewState extends State<SignUpView> {
     try {
       FirebaseUser user;
       if(widget.linkIfAnonymous) {
+        print("linkIfAnonymous flag set, checking whether anonymously authenticated.");
         var user =  await _auth.currentUser();
         if(user != null) {
           print("Linking anonymous user");
