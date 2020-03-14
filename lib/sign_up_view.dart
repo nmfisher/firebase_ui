@@ -1,15 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'l10n/localization.dart';
 import 'utils.dart';
 
 class SignUpView extends StatefulWidget {
   final String email;
   final bool passwordCheck;
+  final bool linkIfAnonymous;
 
-  SignUpView(this.email, this.passwordCheck, {Key key}) : super(key: key);
+  SignUpView(this.email, this.passwordCheck, {this.linkIfAnonymous=true, Key key}) : super(key: key);
 
   @override
   _SignUpViewState createState() => new _SignUpViewState();
@@ -58,14 +59,6 @@ class _SignUpViewState extends State<SignUpView> {
                 padding: const EdgeInsets.all(16.0),
                 child: new ListView(  
                   children: <Widget>[
-                    // new TextField(
-                    //   controller: _controllerEmail,
-                    //   keyboardType: TextInputType.emailAddress,
-                    //   autocorrect: false,
-                    //   onSubmitted: _submit,
-                    //   decoration: new InputDecoration(
-                    //       labelText: FFULocalizations.of(context).emailLabel),
-                    // ),
                     const SizedBox(height: 8.0),
                     new TextField(
                       controller: _controllerDisplayName,
@@ -150,11 +143,24 @@ class _SignUpViewState extends State<SignUpView> {
 
     FirebaseAuth _auth = FirebaseAuth.instance;
     try {
-      AuthResult authResult = await _auth.createUserWithEmailAndPassword(
-        email: _controllerEmail.text,
-        password: _controllerPassword.text,
-      );
-      FirebaseUser user = authResult.user;
+      FirebaseUser user;
+      if(widget.linkIfAnonymous) {
+        var user =  await _auth.currentUser();
+        if(user != null) {
+          print("Linking anonymous user");
+          var credential = EmailAuthCredential(
+            email: _controllerEmail.text,
+            password: _controllerPassword.text);
+          AuthResult authResult = await user.linkWithCredential(credential);
+          user = authResult.user;
+        }
+      } else {
+        AuthResult authResult = await _auth.createUserWithEmailAndPassword(
+          email: _controllerEmail.text,
+          password: _controllerPassword.text,
+        );
+        user = authResult.user;
+      }
       try {
         var userUpdateInfo = new UserUpdateInfo();
         userUpdateInfo.displayName = _controllerDisplayName.text;

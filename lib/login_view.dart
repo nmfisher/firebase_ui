@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -14,6 +16,7 @@ class LoginView extends StatefulWidget {
   final String twitterConsumerSecret;
   final EdgeInsets padding;
   final bool horizontal;
+  final bool linkIfAnonymous;
 
   LoginView(
       {Key key,
@@ -22,6 +25,7 @@ class LoginView extends StatefulWidget {
       this.twitterConsumerKey,
       this.twitterConsumerSecret,
       this.horizontal = false,
+      this.linkIfAnonymous = true,
       @required this.padding})
       : super(key: key);
 
@@ -45,6 +49,7 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+
   _handleGoogleSignIn() async {
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
@@ -52,13 +57,21 @@ class _LoginViewState extends State<LoginView> {
         try {
           AuthCredential credential = GoogleAuthProvider.getCredential(
               idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-          AuthResult authResult = await _auth.signInWithCredential(credential);
-          FirebaseUser user = authResult.user;
-          print(user);
+          _signInOrLinkWithAnonymous(credential);
         } catch (e) {
           showErrorDialog(context, e.details);
         }
     }
+  }
+
+  Future _signInOrLinkWithAnonymous(AuthCredential credential) async {
+    if(widget.linkIfAnonymous) {
+      var user = await _auth.currentUser();
+      user.linkWithCredential(credential);
+    } else {
+      await _auth.signInWithCredential(credential);
+    }
+    return;
   }
 
   _handleFacebookSignin() async {
@@ -68,10 +81,8 @@ class _LoginViewState extends State<LoginView> {
       try {
         AuthCredential credential = FacebookAuthProvider.getCredential(
             accessToken: result.accessToken.token);
-        AuthResult authResult = await _auth.signInWithCredential(credential);
-        FirebaseUser user = authResult.user;
-        print(user);
-      } catch (e) {
+        _signInOrLinkWithAnonymous(credential);
+        } catch (e) {
         showErrorDialog(context, e.details);
       }
     }
