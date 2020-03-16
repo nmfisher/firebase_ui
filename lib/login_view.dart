@@ -17,6 +17,7 @@ class LoginView extends StatefulWidget {
   final EdgeInsets padding;
   final bool horizontal;
   final bool linkIfAnonymous;
+  final Function mergeData;
 
   LoginView(
       {Key key,
@@ -26,6 +27,7 @@ class LoginView extends StatefulWidget {
       this.twitterConsumerSecret,
       this.horizontal = false,
       this.linkIfAnonymous = true,
+      this.mergeData,
       @required this.padding})
       : super(key: key);
 
@@ -58,18 +60,22 @@ class _LoginViewState extends State<LoginView> {
           AuthCredential credential = GoogleAuthProvider.getCredential(
               idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
           _signInOrLinkWithAnonymous(credential);
-        } catch (e) {
+        } catch (e, st) {
+          print(e);
+          print(st);
           showErrorDialog(context, e.details);
         }
     }
   }
 
   Future _signInOrLinkWithAnonymous(AuthCredential credential) async {
-    if(widget.linkIfAnonymous) {
-      var user = await _auth.currentUser();
-      user.linkWithCredential(credential);
-    } else {
-      await _auth.signInWithCredential(credential);
+    var prevUser = await _auth.currentUser();
+    if(prevUser?.isAnonymous == true)
+      print("Current user authenticated anonymously");
+    var authResult = await _auth.signInWithCredential(credential);
+    print("Signed in user with new credentials");
+    if(widget.linkIfAnonymous && prevUser != null) {
+      widget.mergeData(prevUser, authResult.user);
     }
     return;
   }

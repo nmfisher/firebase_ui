@@ -18,6 +18,7 @@ class EmailView extends StatefulWidget {
 class _EmailViewState extends State<EmailView> {
   final TextEditingController _controllerEmail = new TextEditingController();
 
+
   @override
   Widget build(BuildContext context) => new Scaffold(
         appBar: new AppBar(
@@ -70,7 +71,7 @@ class _EmailViewState extends State<EmailView> {
       final FirebaseAuth auth = FirebaseAuth.instance;
       List<String> providers =
           await auth.fetchSignInMethodsForEmail(email: _controllerEmail.text);
-
+      
       if (providers == null || providers.isEmpty) {
         bool connected = await Navigator.of(context)
             .push(new MaterialPageRoute<bool>(builder: (BuildContext context) {

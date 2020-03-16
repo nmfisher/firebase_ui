@@ -17,6 +17,9 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
+
+  _SignUpViewState() {
+  }
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _controllerEmail;
@@ -143,19 +146,28 @@ class _SignUpViewState extends State<SignUpView> {
 
     FirebaseAuth _auth = FirebaseAuth.instance;
     try {
-      FirebaseUser user;
+      FirebaseUser user = await _auth.currentUser();
+      if(user?.isAnonymous == true) {
+        print("User currently anonymously authenticated");
+      }
+      
       if(widget.linkIfAnonymous) {
-        print("linkIfAnonymous flag set, checking whether anonymously authenticated.");
-        var user =  await _auth.currentUser();
         if(user != null) {
-          print("Linking anonymous user");
           var credential = EmailAuthCredential(
             email: _controllerEmail.text,
             password: _controllerPassword.text);
           AuthResult authResult = await user.linkWithCredential(credential);
           user = authResult.user;
+          print("Linked anonymous account to UID ${user.uid}");
+          await _auth.signOut();
+          authResult = await _auth.signInWithEmailAndPassword(email: _controllerEmail.text, password: _controllerPassword.text);
+          user = authResult.user;
+          print("Signed in user ${user.uid}");
         }
-      } else {
+      } 
+
+      if(user == null) {
+        print("No anonymous account present, creating user with email and password.");
         AuthResult authResult = await _auth.createUserWithEmailAndPassword(
           email: _controllerEmail.text,
           password: _controllerPassword.text,
@@ -166,13 +178,16 @@ class _SignUpViewState extends State<SignUpView> {
         var userUpdateInfo = new UserUpdateInfo();
         userUpdateInfo.displayName = _controllerDisplayName.text;
         await user.updateProfile(userUpdateInfo);
-        Navigator.pop(context, true);
-      } catch (e) {
+        if(mounted)
+          Navigator.pop(context, true);
+      } catch (e, st) {
+        print(e);
+        print(st);
         showErrorDialog(context, e.details);
       }
-    } on PlatformException catch (e) {
-      print(e.details);
-      //TODO improve errors catching
+    } catch (e, st) {
+      print(e);
+      print(st);
       String msg = FFULocalizations.of(context).passwordLengthMessage;
       showErrorDialog(context, msg);
     }

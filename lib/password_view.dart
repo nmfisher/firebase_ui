@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 
 import 'l10n/localization.dart';
 import 'trouble_signin.dart';
@@ -15,6 +16,7 @@ class PasswordView extends StatefulWidget {
 }
 
 class _PasswordViewState extends State<PasswordView> {
+
   TextEditingController _controllerEmail;
   TextEditingController _controllerPassword;
   final _formKey = GlobalKey<FormState>();
@@ -42,14 +44,6 @@ class _PasswordViewState extends State<PasswordView> {
             padding: const EdgeInsets.all(16.0),
             child: new Column(
               children: <Widget>[
-                // new TextField(
-                //   controller: _controllerEmail,
-                //   keyboardType: TextInputType.emailAddress,
-                //   autocorrect: false,
-                //   decoration: new InputDecoration(
-                //       labelText: FFULocalizations.of(context).emailLabel),
-                // ),
-                //const SizedBox(height: 5.0),
                 new TextFormField(
                    validator: (value) {
                     if (value.length < 6) {
@@ -112,22 +106,27 @@ class _PasswordViewState extends State<PasswordView> {
 
   _connexion(BuildContext context) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
-    AuthResult authResult;
     FirebaseUser user;
     try {
       if(_formKey.currentState.validate()) {
-          authResult = await _auth.signInWithEmailAndPassword(
-          email: _controllerEmail.text, password: _controllerPassword.text);
-          user = authResult.user;
-          print(user);
+      
+        FirebaseUser user = await _auth.currentUser();
+        
+        var credential = EmailAuthCredential(
+              email: _controllerEmail.text,
+              password: _controllerPassword.text);
+        AuthResult authResult = await _auth.signInWithCredential(credential);
+        print("Signed in user with UID ${user.uid}");
       }
-    } catch (exception) {
+    } catch (exception, st) {
+      print(exception);
+      print(st);
       //TODO improve errors catching
       String msg = FFULocalizations.of(context).passwordInvalidMessage;
       showErrorDialog(context, msg);
     }
 
-    if (user != null) {
+    if (user != null && mounted) {
       Navigator.of(context).pop(true);
     }
   }
