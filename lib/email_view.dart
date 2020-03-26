@@ -33,7 +33,7 @@ class _EmailViewState extends State<EmailView> {
                 children: <Widget>[
                   new TextField(
                     controller: _controllerEmail,
-                    autofocus: true,
+                    autofocus: false,
                     onSubmitted: _submit,
                     keyboardType: TextInputType.emailAddress,
                     autocorrect: false,

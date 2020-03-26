@@ -55,7 +55,7 @@ class _PasswordViewState extends State<PasswordView> {
                     _formKey.currentState.validate();
                   },
                   controller: _controllerPassword,
-                  autofocus: true,
+                  autofocus: false,
                   obscureText: true,
                   autocorrect: false,
                   decoration: new InputDecoration(

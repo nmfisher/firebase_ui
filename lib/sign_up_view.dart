@@ -65,7 +65,7 @@ class _SignUpViewState extends State<SignUpView> {
                     const SizedBox(height: 8.0),
                     new TextField(
                       controller: _controllerDisplayName,
-                      autofocus: true,
+                      autofocus: false,
                       keyboardType: TextInputType.text,
                       autocorrect: false,
                       onChanged: _checkValid,
