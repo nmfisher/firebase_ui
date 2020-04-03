@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+// import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:firebase_ui/l10n/localization.dart';
@@ -10,7 +10,7 @@ import 'package:firebase_ui/l10n/localization.dart';
 enum ProvidersTypes { email, google, facebook, twitter, phone }
 
 final GoogleSignIn googleSignIn =  GoogleSignIn();
-final FacebookLogin facebookLogin =  FacebookLogin();
+// final FacebookLogin facebookLogin =  FacebookLogin();
 
 ProvidersTypes stringToProvidersType(String value) {
   if (value.toLowerCase().contains('facebook')) return ProvidersTypes.facebook;
@@ -149,9 +149,9 @@ Future<void> signOutProviders() async {
 Future<dynamic> signOut(Iterable providers) async {
   return Future.forEach(providers, (p) async {
     switch (p.providerId) {
-      case 'facebook.com':
-        await facebookLogin.logOut();
-        break;
+      // case 'facebook.com':
+      //   await facebookLogin.logOut();
+      //   break;
       case 'google.com':
         await googleSignIn.signOut();
         break;

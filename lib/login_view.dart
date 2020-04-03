@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+// import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_twitter/flutter_twitter.dart';
 
@@ -80,19 +80,19 @@ class _LoginViewState extends State<LoginView> {
     return;
   }
 
-  _handleFacebookSignin() async {
-    FacebookLoginResult result =
-        await facebookLogin.logIn(['email']);
-    if (result.accessToken != null) {
-      try {
-        AuthCredential credential = FacebookAuthProvider.getCredential(
-            accessToken: result.accessToken.token);
-        _signInOrLinkWithAnonymous(credential);
-        } catch (e) {
-        showErrorDialog(context, e.details);
-      }
-    }
-  }
+  // _handleFacebookSignin() async {
+  //   FacebookLoginResult result =
+  //       await facebookLogin.logIn(['email']);
+  //   if (result.accessToken != null) {
+  //     try {
+  //       AuthCredential credential = FacebookAuthProvider.getCredential(
+  //           accessToken: result.accessToken.token);
+  //       _signInOrLinkWithAnonymous(credential);
+  //       } catch (e) {
+  //       showErrorDialog(context, e.details);
+  //     }
+  //   }
+  // }
 
   _handleTwitterSignin() async {
     var twitterLogin = new TwitterLogin(
@@ -121,9 +121,9 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     _buttons = {
-      ProvidersTypes.facebook:
-          providersDefinitions(context)[ProvidersTypes.facebook]
-              .copyWith(onSelected: _handleFacebookSignin),
+      // ProvidersTypes.facebook:
+      //     providersDefinitions(context)[ProvidersTypes.facebook]
+      //         .copyWith(onSelected: _handleFacebookSignin),
       ProvidersTypes.google:
           providersDefinitions(context)[ProvidersTypes.google]
               .copyWith(onSelected: _handleGoogleSignIn),
@@ -154,9 +154,11 @@ class _LoginViewState extends State<LoginView> {
 
   void _followProvider(String value) {
     ProvidersTypes provider = stringToProvidersType(value);
-    if (provider == ProvidersTypes.facebook) {
-      _handleFacebookSignin();
-    } else if (provider == ProvidersTypes.google) {
+    // if (provider == ProvidersTypes.facebook) {
+    //   _handleFacebookSignin();
+    // } else 
+    
+    if (provider == ProvidersTypes.google) {
       _handleGoogleSignIn();
     } else if (provider == ProvidersTypes.twitter) {
       _handleTwitterSignin();
