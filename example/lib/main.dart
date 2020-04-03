@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     if (_currentUser == null) {
       return new SignInScreen(
+        padding:EdgeInsets.zero,
         title: "Demo",
         header: new Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -75,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         showBar: true,
         // horizontalPadding: 8,
-        bottomPadding: 5,
+        // bottomPadding: 5,
         avoidBottomInset: true,
         color: Color(0xFF363636),
         providers: [
@@ -85,7 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ProvidersTypes.email
         ],
         twitterConsumerKey: "",
-        twitterConsumerSecret: "", horizontalPadding: 12,
+        twitterConsumerSecret: "", 
+        // horizontalPadding: 12,
       );
     } else {
       return new HomeScreen(user: _currentUser);
