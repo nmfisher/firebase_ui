@@ -32,6 +32,8 @@ class _PasswordViewState extends State<PasswordView> {
   Widget build(BuildContext context) {
     _controllerEmail.text = widget.email;
     return new Scaffold(
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
       appBar: new AppBar(
         title: new Text(FFULocalizations.of(context).signInTitle),
         elevation: 4.0,
@@ -109,13 +111,12 @@ class _PasswordViewState extends State<PasswordView> {
     FirebaseUser user;
     try {
       if(_formKey.currentState.validate()) {
-      
-        FirebaseUser user = await _auth.currentUser();
         
         var credential = EmailAuthCredential(
               email: _controllerEmail.text,
               password: _controllerPassword.text);
         AuthResult authResult = await _auth.signInWithCredential(credential);
+        user = authResult.user;
         print("Signed in user with UID ${user.uid}");
       }
     } catch (exception, st) {
@@ -125,8 +126,7 @@ class _PasswordViewState extends State<PasswordView> {
       String msg = FFULocalizations.of(context).passwordInvalidMessage;
       showErrorDialog(context, msg);
     }
-
-    if (user != null && mounted) {
+    if (user != null) {
       Navigator.of(context).pop(true);
     }
   }

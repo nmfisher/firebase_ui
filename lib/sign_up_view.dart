@@ -50,6 +50,8 @@ class _SignUpViewState extends State<SignUpView> {
   Widget build(BuildContext context) {
     _controllerEmail.text = widget.email;
     return new Scaffold(
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
       appBar: new AppBar(
         title: new Text(FFULocalizations.of(context).signUpTitle),
         elevation: 4.0,
@@ -156,13 +158,18 @@ class _SignUpViewState extends State<SignUpView> {
           var credential = EmailAuthCredential(
             email: _controllerEmail.text,
             password: _controllerPassword.text);
-          AuthResult authResult = await user.linkWithCredential(credential);
-          user = authResult.user;
-          print("Linked anonymous account to UID ${user.uid}");
-          await _auth.signOut();
-          authResult = await _auth.signInWithEmailAndPassword(email: _controllerEmail.text, password: _controllerPassword.text);
-          user = authResult.user;
-          print("Signed in user ${user.uid}");
+            try {
+              AuthResult authResult = await user.linkWithCredential(credential);
+              user = authResult.user;
+              print("Linked anonymous account to UID ${user.uid}");
+              await _auth.signOut();
+            } catch(err) {
+              // TODO - if link fails, need to notify user
+            } finally {
+              AuthResult authResult = await _auth.signInWithEmailAndPassword(email: _controllerEmail.text, password: _controllerPassword.text);
+              user = authResult.user;
+              print("Signed in user ${user.uid}");
+            }
         }
       } 
 
