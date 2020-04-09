@@ -73,7 +73,6 @@ class _LoginViewState extends State<LoginView> {
     if(prevUser?.isAnonymous == true)
       print("Current user authenticated anonymously");
     var authResult = await _auth.signInWithCredential(credential);
-    print("Signed in user : ${authResult.user} with new credentials : $credential");
     if(widget.linkIfAnonymous && prevUser != null && widget.mergeData != null) {
       widget.mergeData(prevUser, authResult.user);
     }
