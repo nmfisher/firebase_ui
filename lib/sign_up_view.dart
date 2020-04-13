@@ -9,8 +9,9 @@ class SignUpView extends StatefulWidget {
   final String email;
   final bool passwordCheck;
   final bool linkIfAnonymous;
+  final Function onAuthenticating;
 
-  SignUpView(this.email, this.passwordCheck, {this.linkIfAnonymous=true, Key key}) : super(key: key);
+  SignUpView(this.email, this.passwordCheck, this.onAuthenticating, {this.linkIfAnonymous=true, Key key}) : super(key: key);
 
   @override
   _SignUpViewState createState() => new _SignUpViewState();
@@ -148,6 +149,9 @@ class _SignUpViewState extends State<SignUpView> {
 
     FirebaseAuth _auth = FirebaseAuth.instance;
     try {
+      if(widget.onAuthenticating != null) {
+          widget.onAuthenticating();
+      }
       FirebaseUser user = await _auth.currentUser();
       if(user?.isAnonymous == true) {
         print("User currently anonymously authenticated");

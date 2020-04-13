@@ -20,6 +20,7 @@ class LoginView extends StatefulWidget {
   final bool horizontal;
   final bool linkIfAnonymous;
   final AuthCallback onCredentialAccepted;
+  final Function onAuthenticating;
 
   LoginView(
       {Key key,
@@ -30,6 +31,7 @@ class LoginView extends StatefulWidget {
       this.horizontal = false,
       this.linkIfAnonymous = true,
       this.onCredentialAccepted,
+      this.onAuthenticating,
       @required this.padding})
       : super(key: key);
 
@@ -45,7 +47,7 @@ class _LoginViewState extends State<LoginView> {
   _handleEmailSignIn() async {
     String value = await Navigator.of(context)
         .push(new MaterialPageRoute<String>(builder: (BuildContext context) {
-      return new EmailView(widget.passwordCheck);
+      return new EmailView(widget.passwordCheck, widget.onAuthenticating);
     }));
 
     if (value != null) {
@@ -55,6 +57,9 @@ class _LoginViewState extends State<LoginView> {
 
 
   _handleGoogleSignIn() async {
+    if(widget.onAuthenticating != null) {
+      widget.onAuthenticating();
+    }
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
       GoogleSignInAuthentication googleAuth = await googleUser.authentication;

@@ -8,15 +8,15 @@ import 'utils.dart';
 
 class PasswordView extends StatefulWidget {
   final String email;
+  final Function onAuthenticating;
 
-  PasswordView(this.email, {Key key}) : super(key: key);
+  PasswordView(this.email, this.onAuthenticating, {Key key}) : super(key: key);
 
   @override
   _PasswordViewState createState() => new _PasswordViewState();
 }
 
 class _PasswordViewState extends State<PasswordView> {
-
   TextEditingController _controllerEmail;
   TextEditingController _controllerPassword;
   final _formKey = GlobalKey<FormState>();
@@ -41,40 +41,42 @@ class _PasswordViewState extends State<PasswordView> {
       body: new Builder(
         builder: (BuildContext context) {
           return new Form(
-            key: _formKey,
-      child:Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: new Column(
-              children: <Widget>[
-                new TextFormField(
-                   validator: (value) {
-                    if (value.length < 6) {
-                      return 'Password should be at least 8 chars long.';
-                    }
-                    return null;
-                  },
-                  onChanged: (val) {
-                    _formKey.currentState.validate();
-                  },
-                  controller: _controllerPassword,
-                  autofocus: false,
-                  obscureText: true,
-                  autocorrect: false,
-                  decoration: new InputDecoration(
-                  labelText: FFULocalizations.of(context).passwordLabel),
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: new Column(
+                  children: <Widget>[
+                    new TextFormField(
+                      validator: (value) {
+                        if (value.length < 6) {
+                          return 'Password should be at least 8 chars long.';
+                        }
+                        return null;
+                      },
+                      onChanged: (val) {
+                        _formKey.currentState.validate();
+                      },
+                      controller: _controllerPassword,
+                      autofocus: false,
+                      obscureText: true,
+                      autocorrect: false,
+                      decoration: new InputDecoration(
+                          labelText:
+                              FFULocalizations.of(context).passwordLabel),
+                    ),
+                    new SizedBox(height: 16.0),
+                    new Container(
+                        alignment: Alignment.centerLeft,
+                        child: new InkWell(
+                            child: new Text(
+                              FFULocalizations.of(context)
+                                  .troubleSigningInLabel,
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                            onTap: _handleLostPassword)),
+                  ],
                 ),
-                new SizedBox(height: 16.0),
-                new Container(
-                    alignment: Alignment.centerLeft,
-                    child: new InkWell(
-                        child: new Text(
-                          FFULocalizations.of(context).troubleSigningInLabel,
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                        onTap: _handleLostPassword)),
-              ],
-            ),
-          ));
+              ));
         },
       ),
       persistentFooterButtons: <Widget>[
@@ -109,12 +111,13 @@ class _PasswordViewState extends State<PasswordView> {
   _connexion(BuildContext context) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     FirebaseUser user;
+
     try {
-      if(_formKey.currentState.validate()) {
-        
+      if (_formKey.currentState.validate()) {
+        if(widget.onAuthenticating != null)
+          widget.onAuthenticating();
         var credential = EmailAuthCredential(
-              email: _controllerEmail.text,
-              password: _controllerPassword.text);
+            email: _controllerEmail.text, password: _controllerPassword.text);
         AuthResult authResult = await _auth.signInWithCredential(credential);
         user = authResult.user;
         print("Signed in user with UID ${user.uid}");

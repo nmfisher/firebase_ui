@@ -20,8 +20,10 @@ class SignInScreen extends StatefulWidget {
       @required this.padding,
       this.horizontal = false,
       this.onCredentialAccepted,
+      this.onAuthenticating,
       @required this.showBar,
-      @required this.avoidBottomInset})
+      @required this.avoidBottomInset,
+      })
       : super(key: key);
 
   final String title;
@@ -37,7 +39,7 @@ class SignInScreen extends StatefulWidget {
   final bool horizontal;
   final EdgeInsets padding;
   final AuthCallback onCredentialAccepted;
-
+  final Function onAuthenticating;
 
   @override
   _SignInScreenState createState() => _SignInScreenState();
@@ -60,6 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
         children: <Widget>[
           _header,
           LoginView(
+            onAuthenticating: widget.onAuthenticating,
             onCredentialAccepted:widget.onCredentialAccepted,
             horizontal: widget.horizontal,
             providers: _providers,

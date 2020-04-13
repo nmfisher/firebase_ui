@@ -8,8 +8,9 @@ import 'utils.dart';
 
 class EmailView extends StatefulWidget {
   final bool passwordCheck;
+  final Function onAuthenticating;
 
-  EmailView(this.passwordCheck, {Key key}) : super(key: key);
+  EmailView(this.passwordCheck, this.onAuthenticating, {Key key}) : super(key: key);
 
   @override
   _EmailViewState createState() => new _EmailViewState();
@@ -77,7 +78,7 @@ class _EmailViewState extends State<EmailView> {
       if (providers == null || providers.isEmpty) {
         bool connected = await Navigator.of(context)
             .push(new MaterialPageRoute<bool>(builder: (BuildContext context) {
-          return new SignUpView(_controllerEmail.text, widget.passwordCheck);
+          return new SignUpView(_controllerEmail.text, widget.passwordCheck, widget.onAuthenticating);
         }));
 
         if (connected) {
@@ -86,7 +87,7 @@ class _EmailViewState extends State<EmailView> {
       } else if (providers.contains('password')) {
         bool connected = await Navigator.of(context)
             .push(new MaterialPageRoute<bool>(builder: (BuildContext context) {
-          return new PasswordView(_controllerEmail.text);
+          return new PasswordView(_controllerEmail.text, widget.onAuthenticating);
         }));
 
         if (connected) {
