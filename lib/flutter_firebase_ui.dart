@@ -17,7 +17,7 @@ class SignInScreen extends StatefulWidget {
       this.color = Colors.white,
       this.twitterConsumerKey,
       this.twitterConsumerSecret,
-      this.padding,
+      @required this.padding,
       this.horizontal = false,
       this.onCredentialAccepted,
       @required this.showBar,

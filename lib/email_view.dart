@@ -21,6 +21,8 @@ class _EmailViewState extends State<EmailView> {
 
   @override
   Widget build(BuildContext context) => new Scaffold(
+    resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
         appBar: new AppBar(
           title: new Text(FFULocalizations.of(context).welcome),
           elevation: 4.0,
@@ -98,7 +100,7 @@ class _EmailViewState extends State<EmailView> {
         }
       }
     } catch (exception) {
-      print(exception);
+      print("Error in email view : $exception");
     }
   }
 
