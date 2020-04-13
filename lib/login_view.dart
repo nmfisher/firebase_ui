@@ -9,6 +9,8 @@ import 'package:flutter_twitter/flutter_twitter.dart';
 import 'email_view.dart';
 import 'utils.dart';
 
+typedef AuthCallback = void Function(AuthCredential);
+
 class LoginView extends StatefulWidget {
   final List<ProvidersTypes> providers;
   final bool passwordCheck;
@@ -17,7 +19,7 @@ class LoginView extends StatefulWidget {
   final EdgeInsets padding;
   final bool horizontal;
   final bool linkIfAnonymous;
-  final Function mergeData;
+  final AuthCallback onCredentialAccepted;
 
   LoginView(
       {Key key,
@@ -27,7 +29,7 @@ class LoginView extends StatefulWidget {
       this.twitterConsumerSecret,
       this.horizontal = false,
       this.linkIfAnonymous = true,
-      this.mergeData,
+      this.onCredentialAccepted,
       @required this.padding})
       : super(key: key);
 
@@ -74,9 +76,8 @@ class _LoginViewState extends State<LoginView> {
       print("Current user authenticated anonymously");
     var authResult = await _auth.signInWithCredential(credential);
     print("Signed in user with new credentials");
-    if(widget.linkIfAnonymous && prevUser != null) {
-      widget.mergeData(prevUser, authResult.user);
-    }
+    if(widget.onCredentialAccepted != null) 
+      widget.onCredentialAccepted(credential);
     return;
   }
 

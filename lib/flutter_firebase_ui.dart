@@ -19,7 +19,7 @@ class SignInScreen extends StatefulWidget {
       this.twitterConsumerSecret,
       this.padding,
       this.horizontal = false,
-      this.mergeData,
+      this.onCredentialAccepted,
       @required this.showBar,
       @required this.avoidBottomInset})
       : super(key: key);
@@ -36,7 +36,8 @@ class SignInScreen extends StatefulWidget {
   final bool avoidBottomInset;
   final bool horizontal;
   final EdgeInsets padding;
-  final Function mergeData;
+  final AuthCallback onCredentialAccepted;
+
 
   @override
   _SignInScreenState createState() => _SignInScreenState();
@@ -59,7 +60,7 @@ class _SignInScreenState extends State<SignInScreen> {
         children: <Widget>[
           _header,
           LoginView(
-            mergeData:widget.mergeData,
+            onCredentialAccepted:widget.onCredentialAccepted,
             horizontal: widget.horizontal,
             providers: _providers,
             passwordCheck: _passwordCheck,
